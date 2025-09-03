@@ -1,0 +1,38 @@
+{
+  "mfcc_base": {
+    "start": 0,
+    "end": 13,
+    "description": "Base MFCC coefficients"
+  },
+  "mfcc_delta": {
+    "start": 13,
+    "end": 26,
+    "description": "MFCC delta coefficients"
+  },
+  "mfcc_delta2": {
+    "start": 26,
+    "end": 39,
+    "description": "MFCC delta-delta coefficients"
+  },
+  "zcr": {
+    "start": 39,
+    "end": 40,
+    "description": "Zero Crossing Rate"
+  },
+  "chroma": {
+    "start": 40,
+    "end": 52,
+    "description": "Chroma features (pitch class profiles)"
+  },
+  "rms": {
+    "start": 52,
+    "end": 53,
+    "description": "Root Mean Square energy"
+  },
+  "melspectrogram": {
+    "start": 53,
+    "end": 181,
+    "description": "Mel-scale spectrogram (dB)"
+  },
+  "total_dimensions": 181
+}
