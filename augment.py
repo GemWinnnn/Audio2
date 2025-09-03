@@ -261,7 +261,7 @@ def create_cardiac_aware_augmentations(category_targets=None):
     # Define augmentation targets per category based on dataset analysis
     if category_targets is None:
         category_targets = {
-            'normal': 0,            # Don't augment, already sufficient (244 train)
+            'normal': 0,          
             'murmur': 80,           # Add ~80 augmentations (current: 88 train)
             'extra_systole': 80,    # Add ~80 augmentations (current: 32 train)
             'extra_heart_audio': 85, # Add ~85 augmentations (current: 13 train)
