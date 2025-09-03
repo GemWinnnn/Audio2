@@ -75,11 +75,13 @@ To handle **normal class imbalance**, I split classification into two stages:
 
 **Stage 1**: Normal vs Abnormal  
 - Model: **1D CNN**  
-- Results: see `/Stage1` folder  
+- Results: see `/Stage1` folder
+- Final Accuracy: 0.7368
 
 **Stage 2**: Abnormal Subclasses  
 - Model: **1D CNN + Bi-LSTM**  
-- Results: see `/Stage2` folder  
+- Results: see `/Stage2` folder
+- Overall Accuracy: 0.8544
 
 ---
 
