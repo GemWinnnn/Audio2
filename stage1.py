@@ -170,7 +170,7 @@ class HeartSoundClassifier:
         # Train/validation split
         X_train_split, X_val_split, y_train_split, y_val_split = train_test_split(
             X_train, y_train, 
-            test_size=0.15,
+            test_size=0.2,
             stratify=y_train, 
             random_state=42
         )
@@ -397,8 +397,8 @@ def run_heart_sound_pipeline():
 
     CONFIG = {
         'data_path': '/Users/gemwincanete/Audio2/datasets/enhanced_features',
-        'batch_size': 32,
-        'epochs': 500,
+        'batch_size': 8,
+        'epochs': 100,
         'learning_rate': 1e-4
     }
     
@@ -463,7 +463,7 @@ def run_heart_sound_pipeline():
     plt.show()
     
     # Final summary
-    print(f"\n{'='*60}")
+    print(f"\n{'='*60}") 
     print("PIPELINE SUMMARY")
     print("="*60)
     print(f"Model: {architecture_type}")
