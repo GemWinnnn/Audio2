@@ -450,6 +450,14 @@ def health_check():
         'timestamp': datetime.now().isoformat()
     })
 
+@app.route('/test')
+def test_endpoint():
+    """Simple test endpoint to verify server is working"""
+    return jsonify({
+        'message': 'Server is working',
+        'timestamp': datetime.now().isoformat()
+    })
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
@@ -550,6 +558,12 @@ def not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return jsonify({'error': 'Internal server error'}), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Handle all unhandled exceptions and return JSON"""
+    print(f"❌ Unhandled exception: {e}")
+    return jsonify({'success': False, 'error': 'An unexpected error occurred'}), 500
 
 if __name__ == '__main__':
     print("🎵 Heart Sound Analyzer - Starting Server...")

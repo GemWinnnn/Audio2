@@ -341,6 +341,20 @@
             }
         });
 
+        // Check server health on page load
+        window.addEventListener('load', function() {
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.models_loaded) {
+                        showError('Server models not loaded. Please wait for the server to initialize or contact support.');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Health check failed:', error);
+                });
+        });
+
         // Analyze button handling
         document.getElementById('analyzeButton').addEventListener('click', function() {
             if (!selectedFile) {
@@ -366,7 +380,22 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    return response.text().then(text => {
+                        throw new Error(`Server returned non-JSON response: ${text.substring(0, 200)}...`);
+                    });
+                }
+                
+                return response.json();
+            })
             .then(data => {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('progressBar').classList.add('hidden');
