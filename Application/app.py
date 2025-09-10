@@ -54,10 +54,18 @@ class HeartSoundAnalyzer:
         try:
             # Get the base directory (parent of Application folder)
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # Get the Application directory
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+            
+            print(f"🔍 Base directory: {base_dir}")
+            print(f"🔍 App directory: {app_dir}")
             
             print("📄 Loading denoise model...")
             # Load denoise model
             denoise_path = os.path.join(base_dir, 'Denoise', 'best_model_denoise.h5')
+            print(f"🔍 Denoise model path: {denoise_path}")
+            print(f"🔍 Denoise model exists: {os.path.exists(denoise_path)}")
+            
             if not os.path.exists(denoise_path):
                 print(f"⚠️ Denoise model not found at: {denoise_path}")
                 return False
@@ -66,9 +74,14 @@ class HeartSoundAnalyzer:
             print("✅ Denoise model loaded")
             
             print("📄 Loading Stage 1 model...")
-            # Load Stage 1 model (Normal vs Abnormal)
-            stage1_model_path = os.path.join(base_dir, 'stage1_results', 'heart_sound_cnn_20250901_231047.h5')
-            stage1_scaler_path = os.path.join(base_dir, 'stage1_results', 'heart_sound_pipeline_20250901_232643_scaler.pkl')
+            # Load Stage 1 model (Normal vs Abnormal) - models are in Application directory
+            stage1_model_path = os.path.join(app_dir, 'stage1_results', 'heart_sound_cnn_20250901_231047.h5')
+            stage1_scaler_path = os.path.join(app_dir, 'stage1_results', 'heart_sound_pipeline_20250901_232643_scaler.pkl')
+            
+            print(f"🔍 Stage 1 model path: {stage1_model_path}")
+            print(f"🔍 Stage 1 scaler path: {stage1_scaler_path}")
+            print(f"🔍 Stage 1 model exists: {os.path.exists(stage1_model_path)}")
+            print(f"🔍 Stage 1 scaler exists: {os.path.exists(stage1_scaler_path)}")
             
             if not os.path.exists(stage1_model_path) or not os.path.exists(stage1_scaler_path):
                 print(f"⚠️ Stage 1 files not found:")
@@ -81,9 +94,14 @@ class HeartSoundAnalyzer:
             print("✅ Stage 1 model and scaler loaded")
             
             print("📄 Loading Stage 2 model...")
-            # Load Stage 2 model (Abnormality classification)
-            stage2_model_path = os.path.join(base_dir, 'stage2_results', 'abnormality_classification_20250903_140057.h5')
-            stage2_scaler_path = os.path.join(base_dir, 'stage2_results', 'abnormality_classification_pipeline_20250903_144628.pkl')
+            # Load Stage 2 model (Abnormality classification) - models are in Application directory
+            stage2_model_path = os.path.join(app_dir, 'stage2_results', 'abnormality_classification_20250903_140057.h5')
+            stage2_scaler_path = os.path.join(app_dir, 'stage2_results', 'abnormality_classification_pipeline_20250903_144628.pkl')
+            
+            print(f"🔍 Stage 2 model path: {stage2_model_path}")
+            print(f"🔍 Stage 2 scaler path: {stage2_scaler_path}")
+            print(f"🔍 Stage 2 model exists: {os.path.exists(stage2_model_path)}")
+            print(f"🔍 Stage 2 scaler exists: {os.path.exists(stage2_scaler_path)}")
             
             if not os.path.exists(stage2_model_path) or not os.path.exists(stage2_scaler_path):
                 print(f"⚠️ Stage 2 files not found:")
@@ -556,7 +574,7 @@ if __name__ == '__main__':
     else:
         print("❌ Failed to load models. Please check file paths.")
         print("\nExpected files:")
-        print("1. Denoise model: Denoise/best_model_denoise.h5")
+        print("1. Denoise model: ../Denoise/best_model_denoise.h5")
         print("2. Stage 1 model: stage1_results/heart_sound_cnn_20250901_231047.h5")
         print("3. Stage 1 scaler: stage1_results/heart_sound_pipeline_20250901_232643_scaler.pkl")
         print("4. Stage 2 model: stage2_results/abnormality_classification_20250903_140057.h5")
