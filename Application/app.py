@@ -6,7 +6,7 @@ import joblib
 import io
 import base64
 import matplotlib
-matplotlib.use('Agg')  # Use non-GUI backend
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 import soundfile as sf
 from tensorflow.keras.models import load_model
@@ -52,9 +52,12 @@ class HeartSoundAnalyzer:
     def load_models(self):
         """Load all models and scalers"""
         try:
+            # Get the base directory (parent of Application folder)
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            
             print("📄 Loading denoise model...")
             # Load denoise model
-            denoise_path = '/Users/gemwincanete/Audio2/Denoise/best_model_denoise.h5'
+            denoise_path = os.path.join(base_dir, 'Denoise', 'best_model_denoise.h5')
             if not os.path.exists(denoise_path):
                 print(f"⚠️ Denoise model not found at: {denoise_path}")
                 return False
@@ -64,8 +67,8 @@ class HeartSoundAnalyzer:
             
             print("📄 Loading Stage 1 model...")
             # Load Stage 1 model (Normal vs Abnormal)
-            stage1_model_path = '/Users/gemwincanete/Audio2/stage1_results/heart_sound_cnn_20250901_231047.h5'
-            stage1_scaler_path = '/Users/gemwincanete/Audio2/stage1_results/heart_sound_pipeline_20250901_232643_scaler.pkl'
+            stage1_model_path = os.path.join(base_dir, 'stage1_results', 'heart_sound_cnn_20250901_231047.h5')
+            stage1_scaler_path = os.path.join(base_dir, 'stage1_results', 'heart_sound_pipeline_20250901_232643_scaler.pkl')
             
             if not os.path.exists(stage1_model_path) or not os.path.exists(stage1_scaler_path):
                 print(f"⚠️ Stage 1 files not found:")
@@ -79,8 +82,8 @@ class HeartSoundAnalyzer:
             
             print("📄 Loading Stage 2 model...")
             # Load Stage 2 model (Abnormality classification)
-            stage2_model_path = '/Users/gemwincanete/Audio2/stage2_results/abnormality_classification_20250903_140057.h5'
-            stage2_scaler_path = '/Users/gemwincanete/Audio2/stage2_results/abnormality_classification_pipeline_20250903_144628.pkl'
+            stage2_model_path = os.path.join(base_dir, 'stage2_results', 'abnormality_classification_20250903_140057.h5')
+            stage2_scaler_path = os.path.join(base_dir, 'stage2_results', 'abnormality_classification_pipeline_20250903_144628.pkl')
             
             if not os.path.exists(stage2_model_path) or not os.path.exists(stage2_scaler_path):
                 print(f"⚠️ Stage 2 files not found:")
@@ -540,16 +543,21 @@ if __name__ == '__main__':
         print("✅ All models loaded successfully!")
         print("=" * 50)
         print("🚀 Starting Flask server...")
-        print("🌐 Access the application at: http://localhost:5001")
+        
+        # Get port from environment variable (Render sets this)
+        port = int(os.environ.get('PORT', 5001))
+        debug = os.environ.get('FLASK_ENV') == 'development'
+        
+        print(f"🌐 Access the application at: http://localhost:{port}")
         print("=" * 50)
         
         # Run the app only once, after models are loaded
-        app.run(debug=True, host='0.0.0.0', port=5001)
+        app.run(debug=debug, host='0.0.0.0', port=port)
     else:
         print("❌ Failed to load models. Please check file paths.")
         print("\nExpected files:")
-        print("1. Denoise model: /Users/gemwincanete/Audio2/Denoise/best_model_denoise.h5")
-        print("2. Stage 1 model: /Users/gemwincanete/Audio2/stage1_results/heart_sound_cnn_20250901_231047.h5")
-        print("3. Stage 1 scaler: /Users/gemwincanete/Audio2/stage1_results/heart_sound_pipeline_20250901_232643_scaler.pkl")
-        print("4. Stage 2 model: /Users/gemwincanete/Audio2/stage2_results/abnormality_classification_20250903_140057.h5")
-        print("5. Stage 2 scaler: /Users/gemwincanete/Audio2/stage2_results/abnormality_classification_pipeline_20250903_144628.pkl")
+        print("1. Denoise model: Denoise/best_model_denoise.h5")
+        print("2. Stage 1 model: stage1_results/heart_sound_cnn_20250901_231047.h5")
+        print("3. Stage 1 scaler: stage1_results/heart_sound_pipeline_20250901_232643_scaler.pkl")
+        print("4. Stage 2 model: stage2_results/abnormality_classification_20250903_140057.h5")
+        print("5. Stage 2 scaler: stage2_results/abnormality_classification_pipeline_20250903_144628.pkl")
