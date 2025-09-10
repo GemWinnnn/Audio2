@@ -59,6 +59,16 @@ class HeartSoundAnalyzer:
             
             print(f"🔍 Base directory: {base_dir}")
             print(f"🔍 App directory: {app_dir}")
+            print(f"🔍 Current working directory: {os.getcwd()}")
+            print(f"🔍 Files in app directory: {os.listdir(app_dir)}")
+            
+            # Check if we're in a different directory structure (e.g., on Render)
+            if not os.path.exists(os.path.join(base_dir, 'Denoise')):
+                print("🔍 Checking alternative directory structure...")
+                # Maybe the models are in the same directory as the app
+                if os.path.exists(os.path.join(app_dir, 'Denoise')):
+                    print("🔍 Found Denoise in app directory, using that instead")
+                    base_dir = app_dir
             
             print("📄 Loading denoise model...")
             # Load denoise model
@@ -68,10 +78,17 @@ class HeartSoundAnalyzer:
             
             if not os.path.exists(denoise_path):
                 print(f"⚠️ Denoise model not found at: {denoise_path}")
+                print(f"🔍 Checking if Denoise directory exists: {os.path.exists(os.path.join(base_dir, 'Denoise'))}")
+                if os.path.exists(os.path.join(base_dir, 'Denoise')):
+                    print(f"🔍 Files in Denoise directory: {os.listdir(os.path.join(base_dir, 'Denoise'))}")
                 return False
             
-            self.denoise_model = load_model(denoise_path, compile=False)
-            print("✅ Denoise model loaded")
+            try:
+                self.denoise_model = load_model(denoise_path, compile=False)
+                print("✅ Denoise model loaded")
+            except Exception as e:
+                print(f"❌ Error loading denoise model: {e}")
+                return False
             
             print("📄 Loading Stage 1 model...")
             # Load Stage 1 model (Normal vs Abnormal) - models are in Application directory
@@ -87,11 +104,18 @@ class HeartSoundAnalyzer:
                 print(f"⚠️ Stage 1 files not found:")
                 print(f"   Model: {stage1_model_path}")
                 print(f"   Scaler: {stage1_scaler_path}")
+                print(f"🔍 Checking if stage1_results directory exists: {os.path.exists(os.path.join(app_dir, 'stage1_results'))}")
+                if os.path.exists(os.path.join(app_dir, 'stage1_results')):
+                    print(f"🔍 Files in stage1_results directory: {os.listdir(os.path.join(app_dir, 'stage1_results'))}")
                 return False
             
-            self.stage1_model = load_model(stage1_model_path, compile=False)
-            self.stage1_scaler = joblib.load(stage1_scaler_path)
-            print("✅ Stage 1 model and scaler loaded")
+            try:
+                self.stage1_model = load_model(stage1_model_path, compile=False)
+                self.stage1_scaler = joblib.load(stage1_scaler_path)
+                print("✅ Stage 1 model and scaler loaded")
+            except Exception as e:
+                print(f"❌ Error loading Stage 1 model: {e}")
+                return False
             
             print("📄 Loading Stage 2 model...")
             # Load Stage 2 model (Abnormality classification) - models are in Application directory
@@ -107,19 +131,26 @@ class HeartSoundAnalyzer:
                 print(f"⚠️ Stage 2 files not found:")
                 print(f"   Model: {stage2_model_path}")
                 print(f"   Scaler: {stage2_scaler_path}")
+                print(f"🔍 Checking if stage2_results directory exists: {os.path.exists(os.path.join(app_dir, 'stage2_results'))}")
+                if os.path.exists(os.path.join(app_dir, 'stage2_results')):
+                    print(f"🔍 Files in stage2_results directory: {os.listdir(os.path.join(app_dir, 'stage2_results'))}")
                 return False
             
-            self.stage2_model = load_model(stage2_model_path, compile=False)
-            
-            # Load stage 2 scaler from pipeline
-            with open(stage2_scaler_path, 'rb') as f:
-                stage2_pipeline = pickle.load(f)
-                if isinstance(stage2_pipeline, dict) and 'scaler' in stage2_pipeline:
-                    self.stage2_scaler = stage2_pipeline['scaler']
-                else:
-                    # If it's just the scaler itself
-                    self.stage2_scaler = stage2_pipeline
-            print("✅ Stage 2 model and scaler loaded")
+            try:
+                self.stage2_model = load_model(stage2_model_path, compile=False)
+                
+                # Load stage 2 scaler from pipeline
+                with open(stage2_scaler_path, 'rb') as f:
+                    stage2_pipeline = pickle.load(f)
+                    if isinstance(stage2_pipeline, dict) and 'scaler' in stage2_pipeline:
+                        self.stage2_scaler = stage2_pipeline['scaler']
+                    else:
+                        # If it's just the scaler itself
+                        self.stage2_scaler = stage2_pipeline
+                print("✅ Stage 2 model and scaler loaded")
+            except Exception as e:
+                print(f"❌ Error loading Stage 2 model: {e}")
+                return False
             
             # Define label mappings
             self.label_mappings = {
@@ -593,3 +624,7 @@ if __name__ == '__main__':
         print("3. Stage 1 scaler: stage1_results/heart_sound_pipeline_20250901_232643_scaler.pkl")
         print("4. Stage 2 model: stage2_results/abnormality_classification_20250903_140057.h5")
         print("5. Stage 2 scaler: stage2_results/abnormality_classification_pipeline_20250903_144628.pkl")
+        print("\n⚠️ Starting server anyway - uploads will fail until models are loaded")
+        
+        # Start the server anyway so you can at least see the error page
+        app.run(debug=debug, host='0.0.0.0', port=port)
