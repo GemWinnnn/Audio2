@@ -1,3 +1,5 @@
+flask
+flask-cors
 numpy
 pandas
 matplotlib
@@ -6,7 +8,13 @@ scikit-learn
 tensorflow
 keras
 torch
+torchaudio
 soundfile
 scipy
 librosa
 joblib
+pydub
+tqdm
+h5py
+protobuf
+gunicorn
