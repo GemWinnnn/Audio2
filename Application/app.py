@@ -525,9 +525,13 @@ def upload_file():
             
             # Clean up uploaded file
             try:
-                os.remove(file_path)
-                print(f"🗑️ Cleaned up: {filename}")
-            except:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    print(f"🗑️ Cleaned up: {filename}")
+                else:
+                    print(f"⚠️ File already cleaned up or not found: {file_path}")
+            except Exception as cleanup_error:
+                print(f"⚠️ Error during cleanup (non-critical): {cleanup_error}")
                 pass
             
             return jsonify(result)
